@@ -10,7 +10,7 @@
   app.get("/", (request, response) => {
     response.send(`
       <div style="font-family: monospace; line-height: 1.4rem;">
-        <div>Use <span style="background: #e5e5e5;padding: 0.25rem;"><a href="https://${process.env.PROJECT_DOMAIN}.glitch.me/api?generator=animal-sentence&list=output">https://${process.env.PROJECT_DOMAIN}.glitch.me/api?generator=<span style="background:#ffd04a;">animal-sentence</span>&amp;list=<span style="background:#ffd04a;">output</span></a></span> to generate some text. Loading a new generator for the first time will take several seconds, but after that it will be cached and you should be able to generate results quickly.</div>
+        <div>Use <span style="background: #e5e5e5;padding: 0.25rem;"><a style="text-decoration:none; color:inherit;" href="https://${process.env.PROJECT_DOMAIN}.glitch.me/api?generator=animal-sentence&list=output">https://${process.env.PROJECT_DOMAIN}.glitch.me/api?generator=<span style="background:#ffd04a;">animal-sentence</span>&amp;list=<span style="background:#ffd04a;">output</span></a></span> to generate some text. Loading a new generator for the first time will take several seconds, but after that it will be cached and you should be able to generate results quickly.</div>
         ${process.env.PROJECT_DOMAIN === "diy-perchance-api" ? testingOnlyWarning : ""}
       </div>
     `);
