@@ -56,6 +56,7 @@
     // load and cache generator if we don't have it cached, and trim least-recently-used generator if the cache is too big
     if(!generatorWindows[generatorName]) {
       generatorWindows[generatorName] = await makeGeneratorWindow(generatorName);
+      lastGeneratorUseTimes[generatorName] = Date.now(); // <-- need this here so this generator doesn't get trimmed by the code below
       if(Object.keys(generatorWindows).length > maxNumberOfGeneratorsCached) {
         let mostStaleGeneratorName = Object.entries(lastGeneratorUseTimes).sort((a,b) => a[1]-b[1])[0];
         delete generatorWindows[generatorName];
