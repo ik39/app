@@ -20,6 +20,7 @@
     if(!response.ok) throw new Error(`Error: A generator called '${generatorName}' doesn't exist?`);
     let html = await response.text();
     const { window } = new JSDOM(html, {runScripts: "dangerously"});
+    console.log("COOL", window.generatorName);
     return window;
   }
   
