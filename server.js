@@ -65,6 +65,8 @@
   
   async function getGeneratorResult(generatorName, listName) {
     
+    // console.log("getGeneratorResult:", generatorWindows[generatorName].generatorName);
+    
     if(generatorWindows[generatorName]) {
       // clear cache for this generator if it's stale:
       let result = await fetch("https://perchance.org/api/getGeneratorStats?name="+generatorName).then(r => r.json());
@@ -94,7 +96,6 @@
       else if(root.output) listName = "output";
       else return `Error: No 'botOutput' or or '$output' or 'output' list in the '${generatorName}' generator?`;
     }
-    console.log("COOL", generatorWindows[generatorName].generatorName);
     
     let result;
     try {
@@ -135,7 +136,12 @@
         // result = result.replace(/<div[^>]*>(.*?)<\/div>/g, "$1\n");
         // result = result.replace(/<span[^>]*>(.*?)<\/span>/g, "$1");
         
-        msg.reply(result.trim());
+        if(result.length > 2000) {
+          // msg.reply(`Error: Result from '${generatorName}' was ${result.length} characters long but must be under 2000 characters due to Discord API limits.`);
+          msg.reply(result.trim().slice(0, 1950)+" ... (full result was too long)");
+        } else {
+          msg.reply(result.trim());
+        }
       }
     });
 
