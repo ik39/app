@@ -21,6 +21,7 @@
   async function makeGeneratorWindow(generatorName) {
     let html = await fetch(`https://perchance.org/api/downloadGenerator?generatorName=${generatorName}&__cacheBust=${Math.random()}`).then(r => r.text());
     const { window } = new JSDOM(html, {runScripts: "dangerously"});
+    if(!window.root) throw new Error(`Error: A generator called '${generatorName}' doesn't exist?`);
     return window;
   }
   
@@ -33,6 +34,17 @@
     let generatorName = request.query.generator;
     let listName = request.query.list;
     
+    let result = await getGeneratorResult(generatorName, listName).catch(e => e.message);
+    
+    response.send(result);
+    console.log(`Served ${result} in response to ?generator=${generatorName}&list=${listName}`);
+  }); 
+ 
+  const listener = app.listen(process.env.PORT, () => {
+    console.log("Your app is listening on port " + listener.address().port);
+  });
+  
+  async function getGeneratorResult(generatorName, listName) {
     // load and cache generator if we don't have it cached, and trim least-recently-used generator if the cache is too big
     if(!generatorWindows[generatorName]) {
       generatorWindows[generatorName] = await makeGeneratorWindow(generatorName);
@@ -45,14 +57,16 @@
     }
     lastGeneratorUseTimes[generatorName] = Date.now();
     
-    let result = generatorWindows[generatorName].root[request.query.list].toString();
-    response.send(result);
-    console.log(`Served ${result} in response to ?generator=${generatorName}&list=${listName}`);
-  }); 
- 
-  const listener = app.listen(process.env.PORT, () => {
-    console.log("Your app is listening on port " + listener.address().port);
-  });
+    let root = generatorWindows[generatorName].root;
+    
+    if(!listName) {
+      if(root.botOutput) listName = "botOutput";
+      else if(root.output) listName = "output";
+      else return `Error: No 'botOutput' or 'output' list in the '${generatorName}' generator?`;
+    }
+    let result = root[listName].toString();
+    return result;
+  }
   
 
   const { Client, Intents } = require('discord.js');
@@ -60,6 +74,14 @@
   
   client.on('ready', function(e){
     console.log(`Logged into Discord as ${client.user.tag}!`);
+  });
+  
+  client.on('message', async msg => {
+    if(msg.content.startsWith("!perch ")) {
+      let [generatorName, listName] = msg.content.split(" ").slice(1);
+      let result = await getGeneratorResult(generatorName, listName).catch(e => e.message)
+      msg.reply(result);
+    }
   });
   
   client.login(process.env.DISCORD_TOKEN)
