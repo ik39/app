@@ -62,31 +62,36 @@
       else if(root.output) listName = "output";
       else return `Error: No 'botOutput' or or '$output' or 'output' list in the '${generatorName}' generator?`;
     }
-    let result = root[listName].toString();
+    let result = root[listName]+"";
     return result;
   }
   
+  (async function() {
+    const { Client, Intents } = require('discord.js');
+    const client = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 
-  const { Client, Intents } = require('discord.js');
-  const client = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
-  
-  client.on('ready', function(e){
-    console.log(`Logged into Discord as ${client.user.tag}!`);
-  });
-  
-  client.on('message', async msg => {
-    if(msg.content.startsWith("!perch ")) {
-      let [generatorName, listName] = msg.content.split(" ").slice(1);
-      let result = await getGeneratorResult(generatorName, listName).catch(e => e.message)
-      result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");
-      result = result.replace(/<i>([^<]+?)<\/i>/g, "*$1*");
-      result = result.replace(/<u>([^<]+?)<\/u>/g, "__$1__");
-      result = result.replace(/<br\/?>/g, "\n");
-      result = result.replace(/<img [^>]*src="([^"]+)"[^>]*>/g, "$1");
-      msg.reply(result);
-    }
-  });
-  
-  client.login(process.env.DISCORD_TOKEN)
+    client.on('ready', function(e){
+      console.log(`Logged into Discord as ${client.user.tag}!`);
+    });
+
+    client.on('message', async msg => {
+      if(msg.content.startsWith("!perch ")) {
+        let [generatorName, listName] = msg.content.split(" ").slice(1);
+        
+        let result = await getGeneratorResult(generatorName, listName).catch(e => e.message);
+        
+        result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");
+        result = result.replace(/<i>([^<]+?)<\/i>/g, "*$1*");
+        result = result.replace(/<u>([^<]+?)<\/u>/g, "__$1__");
+        result = result.replace(/<br\/?>/g, "\n");
+        result = result.replace(/<img [^>]*src="([^"]+)"[^>]*>/g, "$1");
+        
+        msg.reply(result);
+      }
+    });
+
+    client.login(process.env.DISCORD_TOKEN);
+    process.env.DISCORD_TOKEN = ""; // for safety, because I haven't properly sandboxed JSDOM
+  })();
   
 })();
