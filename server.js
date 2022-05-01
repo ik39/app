@@ -12,6 +12,7 @@
   
   let generatorWindows = {};
   let lastGeneratorUseTimes = {};
+  let generatorCacheTimes = {};
   let maxNumberOfGeneratorsCached = 50;
   
   async function makeGeneratorWindow(generatorName) {
@@ -42,9 +43,19 @@
   });
   
   async function getGeneratorResult(generatorName, listName) {
+    
+    if(generatorWindows[generatorName]) {
+      // clear cache for this generator if it's stale:
+      let result = await fetch("https://perchance.org/api/getGeneratorStats?name="+generatorName).then(r => r.json());
+      if(generatorCacheTimes[generatorName] < result.data.lastEditTime) {
+        delete generatorWindows[generatorName];
+      }
+    }
+    
     // load and cache generator if we don't have it cached, and trim least-recently-used generator if the cache is too big
     if(!generatorWindows[generatorName]) {
       generatorWindows[generatorName] = await makeGeneratorWindow(generatorName);
+      generatorCacheTimes[generatorName] = Date.now();
       lastGeneratorUseTimes[generatorName] = Date.now(); // <-- need this here so this generator doesn't get trimmed by the code below
       if(Object.keys(generatorWindows).length > maxNumberOfGeneratorsCached) {
         let mostStaleGeneratorName = Object.entries(lastGeneratorUseTimes).sort((a,b) => a[1]-b[1])[0];
