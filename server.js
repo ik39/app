@@ -116,6 +116,8 @@
     });
 
     client.on('message', async msg => {
+      if (msg.author.bot) return;
+      
       if(msg.content.startsWith("!perch ")) {
         let [generatorName, listName] = msg.content.split(" ").slice(1);
         
