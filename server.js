@@ -20,7 +20,9 @@
     if(!response.ok) throw new Error(`Error: A generator called '${generatorName}' doesn't exist?`);
     let html = await response.text();
     const { window } = new JSDOM(html, {runScripts: "dangerously"});
-    console.log("COOL", window.generatorName);
+    window.onerror = console.error;
+    window.onunhandledrejection = console.error;
+    await new Promise(r => setTimeout(r, 1000*30));
     return window;
   }
   
@@ -74,6 +76,7 @@
       else if(root.output) listName = "output";
       else return `Error: No 'botOutput' or or '$output' or 'output' list in the '${generatorName}' generator?`;
     }
+    console.log("COOL", generatorWindows[generatorName].generatorName);
     let result = root[listName]+"";
     return result;
   }
