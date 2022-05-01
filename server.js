@@ -1,4 +1,16 @@
 (async function() { 
+  
+  // this is needed to prevent generator errors from crashing this whole node process
+  let ignoreErrors = false;
+  process.on('unhandledRejection', (reason, promise) => {
+    if(ignoreErrors) {
+      console.log(`Unhandled promise rejection:`)
+      console.log(reason);
+    } else {
+      console.error(reason);
+      process.exit(1);
+    }
+  });
 
   const fetch = require("node-fetch");
   const jsdom = require("jsdom");
@@ -19,10 +31,9 @@
     let response = await fetch(`https://perchance.org/api/downloadGenerator?generatorName=${generatorName}&__cacheBust=${Math.random()}`);
     if(!response.ok) throw new Error(`Error: A generator called '${generatorName}' doesn't exist?`);
     let html = await response.text();
+    ignoreErrors = true;
     const { window } = new JSDOM(html, {runScripts: "dangerously"});
-    window.onerror = console.error;
-    window.onunhandledrejection = console.error;
-    await new Promise(r => setTimeout(r, 1000*30));
+    ignoreErrors = false;
     return window;
   }
   
@@ -77,7 +88,10 @@
       else return `Error: No 'botOutput' or or '$output' or 'output' list in the '${generatorName}' generator?`;
     }
     console.log("COOL", generatorWindows[generatorName].generatorName);
-    let result = root[listName]+"";
+    ignoreErrors = true;
+    let result;
+    try {= root[listName]+"";
+    ignoreErrors = false;
     return result;
   }
   
