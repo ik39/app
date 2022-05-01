@@ -78,6 +78,7 @@
     if(msg.content.startsWith("!perch ")) {
       let [generatorName, listName] = msg.content.split(" ").slice(1);
       let result = await getGeneratorResult(generatorName, listName).catch(e => e.message)
+      result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");
       msg.reply(result);
     }
   });
