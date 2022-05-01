@@ -82,6 +82,7 @@
       result = result.replace(/<i>([^<]+?)<\/i>/g, "*$1*");
       result = result.replace(/<u>([^<]+?)<\/u>/g, "__$1__");
       result = result.replace(/<br\/?>/g, "\n");
+      result = result.replace(/<img [^>]*src="([^"]+)"[^>]*>/g, "$1");
       msg.reply(result);
     }
   });
