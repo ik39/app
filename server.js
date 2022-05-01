@@ -60,7 +60,7 @@
       if(root.botOutput) listName = "botOutput";
       else if(root.$output) listName = "$output";
       else if(root.output) listName = "output";
-      else return `Error: No 'botOutput' or 'output' list in the '${generatorName}' generator?`;
+      else return `Error: No 'botOutput' or or '$output' or 'output' list in the '${generatorName}' generator?`;
     }
     let result = root[listName].toString();
     return result;
@@ -79,6 +79,9 @@
       let [generatorName, listName] = msg.content.split(" ").slice(1);
       let result = await getGeneratorResult(generatorName, listName).catch(e => e.message)
       result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");
+      result = result.replace(/<i>([^<]+?)<\/i>/g, "*$1*");
+      result = result.replace(/<u>([^<]+?)<\/u>/g, "__$1__");
+      result = result.replace(/<br\/?>/g, "\n");
       msg.reply(result);
     }
   });
