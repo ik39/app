@@ -1,9 +1,10 @@
 (async function() { 
   
-  // this is needed to prevent generator errors from crashing this whole node process
-  let ignoreErrors = false;
+  // Hacky way to prevent users' generator errors from crashing this whole node process
   process.on('unhandledRejection', (reason, promise) => {
-    if(ignoreErrors) {
+    // console.log("message", reason.message);
+    // console.log("stack", reason.stack);
+    if(reason.stack.toString().includes("/jsdom/") || reason.stack.toString().includes("__createPerchanceTree")) {
       console.log(`Unhandled promise rejection:`)
       console.log(reason);
     } else {
@@ -32,15 +33,13 @@
     if(!response.ok) throw new Error(`Error: A generator called '${generatorName}' doesn't exist?`);
     let html = await response.text();
     
-    ignoreErrors = true;
     const { window } = new JSDOM(html, {runScripts: "dangerously"});
     let i = 0;
-    while(!window.root && i++ < 20) await new Promise(r => setTimeout(r, 1000)); // try pausing for up to 20 seconds
+    while(!window.root && i++ < 30) await new Promise(r => setTimeout(r, 1000)); // try pausing for up to 20 seconds
     if(!window.root) {
       window.close();
       throw new Error(`Error: Couldn't initialize '${generatorName}' - took too long.`);
     }
-    ignoreErrors = false;
     
     return window;
   }
@@ -97,14 +96,12 @@
     }
     console.log("COOL", generatorWindows[generatorName].generatorName);
     
-    ignoreErrors = true; // <-- I think we need this for some JSDOM-related uncatchable errors
     let result;
     try {
       result = root[listName]+"";
     } catch(e) {
       return "Error: "+e.message;
     }
-    ignoreErrors = false;
     
     return result;
   }
@@ -129,9 +126,16 @@
         result = result.replace(/<i>([^<]+?)<\/i>/g, "*$1*");
         result = result.replace(/<u>([^<]+?)<\/u>/g, "__$1__");
         result = result.replace(/<br\/?>/g, "\n");
+        result = result.replace(/<hr>/g, "~~-                                     -~~");
+        result = result.replace(/<hr [^<>]*>/g, "~~-                                     -~~");
         result = result.replace(/<img [^>]*src="([^"]+)"[^>]*>/g, "$1");
         
-        msg.reply(result);
+        // Commenting this out for now because it wouldn't handle nested stuff.
+        // result = result.replace(/<p[^>]*>(.*?)<\/p>/g, "$1\n\n");
+        // result = result.replace(/<div[^>]*>(.*?)<\/div>/g, "$1\n");
+        // result = result.replace(/<span[^>]*>(.*?)<\/span>/g, "$1");
+        
+        msg.reply(result.trim());
       }
     });
 
