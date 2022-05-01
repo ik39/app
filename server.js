@@ -54,4 +54,14 @@
     console.log("Your app is listening on port " + listener.address().port);
   });
   
+
+  const { Client, Intents } = require('discord.js');
+  const client = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
+  
+  client.on('ready', function(e){
+    console.log(`Logged into Discord as ${client.user.tag}!`);
+  });
+  
+  client.login(process.env.DISCORD_TOKEN)
+  
 })();
