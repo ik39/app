@@ -31,9 +31,17 @@
     let response = await fetch(`https://perchance.org/api/downloadGenerator?generatorName=${generatorName}&__cacheBust=${Math.random()}`);
     if(!response.ok) throw new Error(`Error: A generator called '${generatorName}' doesn't exist?`);
     let html = await response.text();
+    
     ignoreErrors = true;
     const { window } = new JSDOM(html, {runScripts: "dangerously"});
+    let i = 0;
+    while(!window.root && i++ < 20) await new Promise(r => setTimeout(r, 1000)); // try pausing for up to 20 seconds
+    if(!window.root) {
+      window.close();
+      throw new Error(`Error: Couldn't initialize '${generatorName}' - took too long.`);
+    }
     ignoreErrors = false;
+    
     return window;
   }
   
@@ -88,10 +96,16 @@
       else return `Error: No 'botOutput' or or '$output' or 'output' list in the '${generatorName}' generator?`;
     }
     console.log("COOL", generatorWindows[generatorName].generatorName);
-    ignoreErrors = true;
+    
+    ignoreErrors = true; // <-- I think we need this for some JSDOM-related uncatchable errors
     let result;
-    try {= root[listName]+"";
+    try {
+      result = root[listName]+"";
+    } catch(e) {
+      return "Error: "+e.message;
+    }
     ignoreErrors = false;
+    
     return result;
   }
   
@@ -106,6 +120,8 @@
     client.on('message', async msg => {
       if(msg.content.startsWith("!perch ")) {
         let [generatorName, listName] = msg.content.split(" ").slice(1);
+        
+        if(generatorName === "<restart>") return process.exit(0);
         
         let result = await getGeneratorResult(generatorName, listName).catch(e => e.message);
         
