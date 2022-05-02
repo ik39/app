@@ -155,6 +155,11 @@
           else if(va[1] === "false") va[1] = false;
         }
         
+        let specialVariables = variableAssignments.filter(e => e[0].startsWith("@")).map(e => [e[0].slice(1), e[1]]);
+        variableAssignments = variableAssignments.filter(e => !e[0].startsWith("@"));
+        
+        let specialVariableMap = specialVariables.reduce((a,v) => (a[v[0]]=v[1], a), {});
+        
         if(doNotReplyDueToRateLimit) {
           console.error(`Couldn't reply to ${msg.content} due to rate limit.`);
           return;
@@ -167,7 +172,10 @@
         
         if(generatorName === "<restart>") return process.exit(0);
         
-        let result = await getGeneratorResult(generatorName, listName, variableAssignments).catch(e => e.message);
+        let result;
+        for(let i = 0; i < n; i++) {
+          result = await getGeneratorResult(generatorName, listName, variableAssignments).catch(e => e.message);
+        }
         
         let files = [];
         let base64Arr = [...result.matchAll(/data:image\/.{1,7};base64,(.+?)(?:["'\s]|$)/g)].map(m => m[1]);
