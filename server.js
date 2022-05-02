@@ -20,7 +20,11 @@
   const app = express();
 
   app.get("/", (request, response) => {
-    response.send(`Online.`);
+    response.send(`Hi.`);
+  });
+  app.get("/status", (request, response) => {
+    console.log("Responded to status request.");
+    response.send(`online`);
   });
   
   let generatorWindows = {};
@@ -160,12 +164,12 @@
         let specialVariables = variableAssignments.filter(e => e[0].startsWith("@")).map(e => [e[0].slice(1), e[1]]);
         variableAssignments = variableAssignments.filter(e => !e[0].startsWith("@"));
         
-        console.log("specialVariables:", specialVariables);
-        console.log("variableAssignments:", variableAssignments);
+        // console.log("specialVariables:", specialVariables);
+        // console.log("variableAssignments:", variableAssignments);
         
         let specialVariableMap = specialVariables.reduce((a,v) => (a[v[0]]=v[1], a), {});
         
-        console.log("specialVariableMap:", specialVariableMap);
+        // console.log("specialVariableMap:", specialVariableMap);
         
         if(doNotReplyDueToRateLimit) {
           console.error(`Couldn't reply to ${msg.content} due to rate limit.`);
