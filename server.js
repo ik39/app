@@ -93,8 +93,15 @@
     
     for(let [name, value] of variableAssignments) {
       console.log("variableAssignment:", name, value);
-      window[name] = value;
-      root[name] = value;
+      // name can be something like "city.population" 
+      let w = window;
+      let r = root;
+      for(let n of name.split(".")) {
+        if(w) w = w[n];
+        if(r) r = r[n];
+      }
+      if(w) w = value;
+      if(r) r = value;
     }
     
     if(!listName) {
