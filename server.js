@@ -63,7 +63,7 @@
     console.log("Your app is listening on port " + listener.address().port);
   });
   
-  async function getGeneratorResult(generatorName, listName) {
+  async function getGeneratorResult(generatorName, listName, variableAssignments=[]) {
     
     // console.log("getGeneratorResult:", generatorWindows[generatorName].generatorName);
     
@@ -88,7 +88,14 @@
     }
     lastGeneratorUseTimes[generatorName] = Date.now();
     
-    let root = generatorWindows[generatorName].root;
+    let window = generatorWindows[generatorName];
+    let root = window.root;
+    
+    for(let [name, value] of variableAssignments) {
+      console.log("variableAssignment:", name, value);
+      window[name] = value;
+      root[name] = value;
+    }
     
     if(!listName) {
       if(root.botOutput) listName = "botOutput";
@@ -121,7 +128,14 @@
       if (msg.author.bot) return;
       
       if(msg.content.startsWith("!perch ")) {
-        let [generatorName, listName] = msg.content.split(" ").slice(1);
+        let [generatorName, listName, ...variableAssignments] = msg.content.split(" ").slice(1);
+        
+        variableAssignments = variableAssignments.map(va => va.split("="));
+        for(let va of variableAssignments) {
+          if(String(Number(va[1])) === va[1]) va[1] = Number(va[1]);
+          else if(va[1] === "true") va[1] = true;
+          else if(va[1] === "false") va[1] = false;
+        }
         
         if(doNotReplyDueToRateLimit) {
           console.error(`Couldn't reply to ${msg.content} due to rate limit.`);
@@ -135,7 +149,7 @@
         
         if(generatorName === "<restart>") return process.exit(0);
         
-        let result = await getGeneratorResult(generatorName, listName).catch(e => e.message);
+        let result = await getGeneratorResult(generatorName, listName, variableAssignments).catch(e => e.message);
         
         let files = [];
         let base64Arr = [...result.matchAll(/data:image\/.{1,7};base64,(.+?)(?:["'\s]|$)/g)].map(m => m[1]);
