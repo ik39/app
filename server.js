@@ -93,7 +93,7 @@
     
     for(let [name, value] of variableAssignments) {
       console.log("variableAssignment:", name, value);
-      // name can be something like "city.population" 
+      // `name` can be something like "city.stats.population" or "inputEl.value"
       let w = window;
       let r = root;
       for(let n of name.split(".")) {
@@ -141,7 +141,7 @@
         
         for(let vaString of variableAssignments) {
           if(!vaString.includes("=")) {
-            await msg.reply(`Your command should be in the format\n\`\`\`!perch generator-name\`\`\`\nor:\n\`\`\`!perch generator-name variable=value variable=value\`\`\`\nor:\n\`\`\`!perch generator-name:listName variable=value variable=value\`\`\`\n`);
+            await msg.reply(`Your command should be in the format\n\`\`\`!perch generator-name\`\`\`\nor:\n\`\`\`!perch generator-name:listName\`\`\`\nor:\n\`\`\`!perch generator-name:listName variable1=value variable2.thing=value\`\`\`\n`);
             return;
           }
         }
