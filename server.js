@@ -96,7 +96,8 @@
       // `name` can be something like "city.stats.population" or "inputEl.value"
       let w = window;
       let r = root;
-      for(let n of name.split(".")) {
+      let parts = name.split(".")
+      for(let n of par.slice()) {
         if(w) w = w[n];
         if(r) r = r[n];
       }
