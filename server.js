@@ -138,9 +138,9 @@
         let result = await getGeneratorResult(generatorName, listName).catch(e => e.message);
         
         let files = [];
-        let base64Arr = [...result.matchAll(/data:image\/.{1,7};base64,(.+?)(?:["'\s]|$)/)];
+        let base64Arr = [...result.matchAll(/data:image\/.{1,7};base64,(.+?)(?:["'\s]|$)/g)].map(m => m[1]);
         for(let base64 of base64Arr.slice(0, 10)) {
-          const imageBuf = new Buffer(base64, 'base64');
+          files.push( Buffer.from(base64, 'base64') );
         }
         
         result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");
@@ -149,7 +149,7 @@
         result = result.replace(/<br\/?>/g, "\n");
         result = result.replace(/<hr>/g, "~~-                                     -~~");
         result = result.replace(/<hr [^<>]*>/g, "~~-                                     -~~");
-        result = result.replace(/<img [^>]*src="data:image\/([^"]+)"[^>]*>/g, "");
+        result = result.replace(/<img [^>]*src="data:image\/([^"]+)"[^>]*>/g, ""); // we've already processed the data urls above, so we remove them
         result = result.replace(/<img [^>]*src="([^"]+)"[^>]*>/g, "$1");
         result = result.replace(/&#160;/g, " ");
         result = result.replace(/&nbsp;/g, " ");
@@ -170,7 +170,7 @@
         result = result.trim();
         
         let data = await msg.reply({
-          content: result,
+          content: result || " ",
           files,
         });
         
