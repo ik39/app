@@ -145,6 +145,12 @@
         
         let [generatorNameColonListName, ...variableAssignments] = msg.content.split(" ").slice(1);
         
+        if(variableAssignments.length === 1 && variableAssignments[0] === "@reset") {
+          delete generatorWindows[generatorNameColonListName];
+          await msg.reply(`Deleted '${generatorNameColonListName}' from the cache.`);
+          return;
+        }
+        
         let [generatorName, listName] = generatorNameColonListName.split(":");
         
         for(let vaString of variableAssignments) {

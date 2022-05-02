@@ -11,7 +11,7 @@
     try {
       // let text = await fetch(`https://${process.env.PROJECT_DOMAIN}.glitch.me/status`, {timeout:5000}).then(r => r.text());
       let text = await fetch(`http://localhost:3000/status`, {timeout:5000}).then(r => r.text());
-      if(text === "Online.") {
+      if(text === "online") {
         lastSeenTime = Date.now();
         console.log("Seen!");
       }
