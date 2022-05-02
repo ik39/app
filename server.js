@@ -137,6 +137,8 @@
       if (msg.author.bot) return;
       
       if(msg.content.startsWith("!perch ")) {
+        console.log("msg.content:", msg.content);
+        
         let [generatorNameColonListName, ...variableAssignments] = msg.content.split(" ").slice(1);
         
         let [generatorName, listName] = generatorNameColonListName.split(":");
@@ -158,23 +160,30 @@
         let specialVariables = variableAssignments.filter(e => e[0].startsWith("@")).map(e => [e[0].slice(1), e[1]]);
         variableAssignments = variableAssignments.filter(e => !e[0].startsWith("@"));
         
+        console.log("specialVariables:", specialVariables);
+        console.log("variableAssignments:", variableAssignments);
+        
         let specialVariableMap = specialVariables.reduce((a,v) => (a[v[0]]=v[1], a), {});
+        
+        console.log("specialVariableMap:", specialVariableMap);
         
         if(doNotReplyDueToRateLimit) {
           console.error(`Couldn't reply to ${msg.content} due to rate limit.`);
           return;
         }
         
-//         if(generatorName === "TEST123") {
-          
-//           return;
-//         }
-        
         if(generatorName === "<restart>") return process.exit(0);
         
-        let result;
+        let n = specialVariableMap.n || 1;
+        if(typeof n !== "number") n = 1;
+        if(n < 1) n = 1;
+        if(n > 100) n = 100;
+        
+        let joiner = "\n";
+        
+        let result = "";
         for(let i = 0; i < n; i++) {
-          result = await getGeneratorResult(generatorName, listName, variableAssignments).catch(e => e.message);
+          result += await getGeneratorResult(generatorName, listName, variableAssignments).catch(e => e.message) + joiner;
         }
         
         let files = [];
