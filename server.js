@@ -183,6 +183,7 @@
         result = result.replace(/<hr [^<>]*>/g, "~~-                                     -~~");
         result = result.replace(/<img [^>]*src=['"]data:image\/([^"']+)['"][^>]*>/g, ""); // we've already processed the data urls above, so we remove them
         result = result.replace(/<img [^>]*src=['"]([^"']+)['"][^>]*>/g, "$1");
+        result = result.replace(/<a [^>]*href=['"]([^"']+)['"][^>]*>([^<]+)<\/a>/g, "$2: $1 ");
         result = result.replace(/&#160;/g, " ");
         result = result.replace(/&nbsp;/g, " ");
         
