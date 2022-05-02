@@ -128,7 +128,16 @@
       if (msg.author.bot) return;
       
       if(msg.content.startsWith("!perch ")) {
-        let [generatorName, listName, ...variableAssignments] = msg.content.split(" ").slice(1);
+        let [generatorNameColonListName, ...variableAssignments] = msg.content.split(" ").slice(1);
+        
+        let [generatorName, listName] = generatorNameColonListName.split(":");
+        
+        for(let vaString of variableAssignments) {
+          if(!vaString.includes("=")) {
+            await msg.reply(`Your command should be in the format\n\`\`\`!perch generator-name\`\`\`\nor:\n\`\`\`!perch generator-name variable=value variable=value\`\`\`\nor:\n\`\`\`!perch generator-name:listName variable=value variable=value\`\`\`\n`);
+            return;
+          }
+        }
         
         variableAssignments = variableAssignments.map(va => va.split("="));
         for(let va of variableAssignments) {
