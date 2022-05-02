@@ -35,7 +35,7 @@
     
     const { window } = new JSDOM(html, {runScripts: "dangerously"});
     let i = 0;
-    while(!window.root && i++ < 30) await new Promise(r => setTimeout(r, 1000)); // try pausing for up to 20 seconds
+    while(!window.root && i++ < 30) await new Promise(r => setTimeout(r, 1000)); // try pausing for up to 30 seconds
     if(!window.root) {
       window.close();
       throw new Error(`Error: Couldn't initialize '${generatorName}' - took too long.`);
