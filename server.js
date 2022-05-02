@@ -47,7 +47,7 @@
   // reboot the server every 30 minutes (in case a generator has an infinite loop or something):
   setTimeout(() => {
     process.exit(0);
-  }, 1000*60*30); 
+  }, 1000*60*35); 
 
   app.get("/api", async (request, response) => {
     let generatorName = request.query.generator;
@@ -132,6 +132,8 @@
         result = result.replace(/<hr>/g, "~~-                                     -~~");
         result = result.replace(/<hr [^<>]*>/g, "~~-                                     -~~");
         result = result.replace(/<img [^>]*src="([^"]+)"[^>]*>/g, "$1");
+        result = result.replace(/&#160;/g, " ");
+        result = result.replace(/&nbsp;/g, " ");
         
         // Commenting this out for now because it wouldn't handle nested stuff.
         // result = result.replace(/<p[^>]*>(.*?)<\/p>/g, "$1\n\n");
