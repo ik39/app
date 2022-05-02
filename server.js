@@ -178,11 +178,11 @@
         result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");
         result = result.replace(/<i>([^<]+?)<\/i>/g, "*$1*");
         result = result.replace(/<u>([^<]+?)<\/u>/g, "__$1__");
-        result = result.replace(/<br\/?>/g, "\n");
+        result = result.replace(/<br ?\/?>/g, "\n");
         result = result.replace(/<hr>/g, "~~-                                     -~~");
         result = result.replace(/<hr [^<>]*>/g, "~~-                                     -~~");
-        result = result.replace(/<img [^>]*src="data:image\/([^"]+)"[^>]*>/g, ""); // we've already processed the data urls above, so we remove them
-        result = result.replace(/<img [^>]*src="([^"]+)"[^>]*>/g, "$1");
+        result = result.replace(/<img [^>]*src=['"]data:image\/([^"']+)['"][^>]*>/g, ""); // we've already processed the data urls above, so we remove them
+        result = result.replace(/<img [^>]*src=['"]([^"']+)['"][^>]*>/g, "$1");
         result = result.replace(/&#160;/g, " ");
         result = result.replace(/&nbsp;/g, " ");
         
