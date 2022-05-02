@@ -96,13 +96,14 @@
       // `name` can be something like "city.stats.population" or "inputEl.value"
       let w = window;
       let r = root;
-      let parts = name.split(".")
-      for(let n of par.slice()) {
+      let parts = name.split(".");
+      let lastPart = parts.pop();
+      for(let n of parts) {
         if(w) w = w[n];
         if(r) r = r[n];
       }
-      if(w) w = value;
-      if(r) r = value;
+      if(w) w[lastPart] = value;
+      if(r) r[lastPart] = value;
     }
     
     if(!listName) {
