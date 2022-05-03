@@ -211,11 +211,12 @@
         
         for(let match of result.matchAll(/data-bot-indicator="---color-palette-plugin-output---" data-colors="([^"]+)"/g)) {
           let colors = decodeURIComponent(match[1]).split("<|||>");
-          const canvas = new skiaCanvas.Canvas(width, height);
-          const ctx = canvas.getContext('2d');
           
           let width = 500;
           let height = 100;
+          
+          const canvas = new skiaCanvas.Canvas(width, height);
+          const ctx = canvas.getContext('2d');
           ctx.fillStyle = "white";
           ctx.fillRect(0, 0, width, height);
           
