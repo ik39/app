@@ -130,6 +130,7 @@
   }
   
   (async function() {
+    const Canvas = require('canvas'); // for image stuff like image-layer-combiner-plugin
     const { Client, Intents, MessageAttachment } = require('discord.js');
     const client = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 
@@ -209,7 +210,27 @@
         for(let match of result.matchAll(/data-bot-indicator="---image-layer-combiner-plugin-output---" data-image-urls="([^"]+)" data-image-filters="([^"]+)"/g)) {
           let urls = decodeURIComponent(match[1]).split("<|||>");
           let filters = decodeURIComponent(match[1]).split("<|||>");
-          let imageBlobs = await Promise.all(urls.map(url => fetch(url).then(r => r.blob()));
+          
+          // since we want to draw the bottom layers first:
+          urls.reverse();
+          filters.reverse();
+          
+          let canvasImages = await Promise.all(urls.map(url => Canvas.loadImage(url)));
+          
+          let width = 500;
+          let height = Math.round((500/canvasImages[0].width) * canvasImages[0].height);
+          
+          const canvas = Canvas.createCanvas(width, height);
+          const ctx = canvas.getContext('2d');
+          
+          let i = 0;
+          for(let img of canvasImages) {
+            ctx.filter = filters[i++];
+            ctx.drawImage(img, 0, 0, width, height);
+          }
+
+          let dataUrl = canvas.toDataURL('image/jpeg');
+          files.push( Buffer.from(dataUrl.split(""), 'base64') );
         }
         
         result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");
