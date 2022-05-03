@@ -6,7 +6,10 @@
   while(1) {
     await new Promise(r => setTimeout(r, 5000));
     
-    if(Date.now() - lastSeenTime > 1000*30) process.exit();
+    if(Date.now() - lastSeenTime > 1000*30) {
+      process.exit(0);
+      return;
+    }
     
     try {
       // let text = await fetch(`https://${process.env.PROJECT_DOMAIN}.glitch.me/status`, {timeout:5000}).then(r => r.text());
