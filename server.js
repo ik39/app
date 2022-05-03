@@ -77,6 +77,7 @@
       let result = await fetch("https://perchance.org/api/getGeneratorStats?name="+generatorName).then(r => r.json());
       lastEditTimeCache[generatorName] = result.data.lastEditTime;
       if(generatorCacheTimes[generatorName] < result.data.lastEditTime) {
+        generatorWindows[generatorName].close();
         delete generatorWindows[generatorName];
       }
     }
@@ -88,6 +89,7 @@
       lastGeneratorUseTimes[generatorName] = Date.now(); // <-- need this here so this generator doesn't get trimmed by the code below
       if(Object.keys(generatorWindows).length > maxNumberOfGeneratorsCached) {
         let mostStaleGeneratorName = Object.entries(lastGeneratorUseTimes).sort((a,b) => a[1]-b[1])[0];
+        generatorWindows[generatorName].close();
         delete generatorWindows[generatorName];
         delete lastGeneratorUseTimes[generatorName];
       }
@@ -121,7 +123,13 @@
     
     let result;
     try {
-      result = root[listName]+"";
+      let r = root;
+      let parts = listName.split(".");
+      let lastPart = parts.pop();
+      for(let n of parts) {
+        if(r) r = r[n];
+      }
+      result = r[lastPart]+"";
     } catch(e) {
       return "Error: "+e.message;
     }
@@ -151,6 +159,7 @@
         let [generatorNameColonListName, ...variableAssignments] = msg.content.split(" ").slice(1);
         
         if(variableAssignments.length === 1 && variableAssignments[0] === "@reset") {
+          generatorWindows[generatorNameColonListName].close();
           delete generatorWindows[generatorNameColonListName];
           await msg.reply(`Deleted '${generatorNameColonListName}' from the cache.`);
           return;
