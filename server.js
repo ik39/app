@@ -235,7 +235,7 @@
           files.push( Buffer.from(dataUrl.split(",")[1], 'base64') );
           
           // note this regex is WITHOUT the g flag, so we only remove/replace one instance - i.e. the one we just processed.
-          result = result.replace(/<section data-bot-indicator="---color-palette-plugin-output---".*?>.+?<\/section>/s, `Colors: ${colors.join(" ")}`);
+          result = result.replace(/<div data-bot-indicator="---color-palette-plugin-output---".*?>.+?<\/div>/s, `Colors: ${colors.join(" ")}`);
         }
         
         // convert image-layer-combiner-plugin images to attachments:
