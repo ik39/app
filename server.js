@@ -216,14 +216,13 @@
           
           let canvasImages = await Promise.all(urls.map(url => Canvas.loadImage(url)));
           
-          console.log(urls);
-          console.log(filters);
-          
           if(!height) height = Math.round((width/canvasImages[0].width) * canvasImages[0].height);
           
           // since we want to draw the bottom layers first:
-          urls.reverse();
+          canvasImages.reverse();
           filters.reverse();
+          
+          console.log(filters);
           
           const canvas = Canvas.createCanvas(width, height);
           const ctx = canvas.getContext('2d');
