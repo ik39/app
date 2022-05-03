@@ -67,13 +67,15 @@
     console.log("Your app is listening on port " + listener.address().port);
   });
   
+  let lastEditTimeCache = {};
   async function getGeneratorResult(generatorName, listName, variableAssignments=[]) {
     
     // console.log("getGeneratorResult:", generatorWindows[generatorName].generatorName);
     
-    if(generatorWindows[generatorName]) {
+    if(generatorWindows[generatorName] && (!lastEditTimeCache[generatorName] || Date.now()-lastEditTimeCache[generatorName] < 3000)) {
       // clear cache for this generator if it's stale:
       let result = await fetch("https://perchance.org/api/getGeneratorStats?name="+generatorName).then(r => r.json());
+      lastEditTimeCache[generatorName] = result.data.lastEditTime;
       if(generatorCacheTimes[generatorName] < result.data.lastEditTime) {
         delete generatorWindows[generatorName];
       }
@@ -196,10 +198,18 @@
           result += await getGeneratorResult(generatorName, listName, variableAssignments).catch(e => e.message) + joiner;
         }
         
+        // convert image data URLs to attachements
         let files = [];
         let base64Arr = [...result.matchAll(/data:image\/.{1,7};base64,(.+?)(?:["'\s]|$)/g)].map(m => m[1]);
         for(let base64 of base64Arr.slice(0, 10)) {
           files.push( Buffer.from(base64, 'base64') );
+        }
+        
+        // convert image-layer-combiner-plugin images to attachments:
+        for(let match of result.matchAll(/data-bot-indicator="---image-layer-combiner-plugin-output---" data-image-urls="([^"]+)" data-image-filters="([^"]+)"/g)) {
+          let urls = decodeURIComponent(match[1]).split("<|||>");
+          let filters = decodeURIComponent(match[1]).split("<|||>");
+          let imageBlobs = await Promise.all(urls.map(url => fetch(url).then(r => r.blob()));
         }
         
         result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");
