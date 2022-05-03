@@ -158,6 +158,8 @@
         
         let [generatorName, listName] = generatorNameColonListName.split(":");
         
+        // if(generatorName.startsWith("https://perchance.org/")) generatorName.replace("https://perchance.org/", "");
+        
         for(let vaString of variableAssignments) {
           if(!vaString.includes("=")) {
             await msg.reply(`Your command should be in the format\n\`\`\`!perch generator-name\`\`\`\nor:\n\`\`\`!perch generator-name:listName\`\`\`\nor:\n\`\`\`!perch generator-name:listName variable1=value variable2.thing=value\`\`\`\n`);
@@ -187,7 +189,7 @@
           return;
         }
         
-        if(generatorName === "<restart>") return process.exit(0);
+        if(generatorName === "@reset") return process.exit(0);
         
         let n = specialVariableMap.n || 1;
         if(typeof n !== "number") n = 1;
