@@ -230,7 +230,7 @@
           
           let i = 0;
           for(let img of canvasImages) {
-            ctx.filter = filters[i++];
+            ctx.filter = filters[i++] || "none";
             ctx.drawImage(img, 0, 0, width, height);
           }
 
