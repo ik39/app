@@ -207,18 +207,19 @@
         }
         
         // convert image-layer-combiner-plugin images to attachments:
-        for(let match of result.matchAll(/data-bot-indicator="---image-layer-combiner-plugin-output---" data-image-urls="([^"]+)" data-image-filters="([^"]+)"/g)) {
+        for(let match of result.matchAll(/data-bot-indicator="---image-layer-combiner-plugin-output---" data-image-urls="([^"]+)" data-image-filters="([^"]+)" data-width="([^"]*)" data-height="([^"]*)"/g)) {
           let urls = decodeURIComponent(match[1]).split("<|||>");
           let filters = decodeURIComponent(match[1]).split("<|||>");
+          
+          let width = Number(match[2]) || 400;
+          let height = Number(match[3]) || null;
+          if(!height) height = Math.round((500/canvasImages[0].width) * canvasImages[0].height);
           
           // since we want to draw the bottom layers first:
           urls.reverse();
           filters.reverse();
           
           let canvasImages = await Promise.all(urls.map(url => Canvas.loadImage(url)));
-          
-          let width = 500;
-          let height = Math.round((500/canvasImages[0].width) * canvasImages[0].height);
           
           const canvas = Canvas.createCanvas(width, height);
           const ctx = canvas.getContext('2d');
@@ -230,7 +231,7 @@
           }
 
           let dataUrl = canvas.toDataURL('image/jpeg');
-          files.push( Buffer.from(dataUrl.split(""), 'base64') );
+          files.push( Buffer.from(dataUrl.split(",")[1], 'base64') );
         }
         
         result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");

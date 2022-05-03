@@ -14,7 +14,8 @@
     "express": "^4.17.1",
     "node-fetch": "^2.6.1",
     "jsdom": "^19.0.0",
-    "discord.js": "^13.6.0"
+    "discord.js": "^13.6.0",
+    "canvas": "^2.9.1"
   },
   "engines": {
     "node": "16.x"
