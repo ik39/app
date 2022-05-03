@@ -181,6 +181,9 @@
           if(String(Number(va[1])) === va[1]) va[1] = Number(va[1]);
           else if(va[1] === "true") va[1] = true;
           else if(va[1] === "false") va[1] = false;
+          
+          
+          if(typeof va[1] === "string") va[1] = va[1].replace(/\\n/g, "\n"); // so people can set e.g. textarea inputs that have multiple lines
         }
         
         let specialVariables = variableAssignments.filter(e => e[0].startsWith("%")).map(e => [e[0].slice(1), e[1]]);
