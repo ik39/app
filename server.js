@@ -158,7 +158,7 @@
         
         let [generatorNameColonListName, ...variableAssignments] = msg.content.split(" ").slice(1);
         
-        if(variableAssignments.length === 1 && variableAssignments[0] === "@reset") {
+        if(variableAssignments.length === 1 && variableAssignments[0] === "%reset") {
           generatorWindows[generatorNameColonListName].close();
           delete generatorWindows[generatorNameColonListName];
           await msg.reply(`Deleted '${generatorNameColonListName}' from the cache.`);
@@ -183,8 +183,8 @@
           else if(va[1] === "false") va[1] = false;
         }
         
-        let specialVariables = variableAssignments.filter(e => e[0].startsWith("@")).map(e => [e[0].slice(1), e[1]]);
-        variableAssignments = variableAssignments.filter(e => !e[0].startsWith("@"));
+        let specialVariables = variableAssignments.filter(e => e[0].startsWith("%")).map(e => [e[0].slice(1), e[1]]);
+        variableAssignments = variableAssignments.filter(e => !e[0].startsWith("%"));
         
         // console.log("specialVariables:", specialVariables);
         // console.log("variableAssignments:", variableAssignments);
@@ -198,7 +198,7 @@
           return;
         }
         
-        if(generatorName === "@reset") return process.exit(0);
+        if(generatorName === "%reset") return process.exit(0);
         
         let n = specialVariableMap.n || 1;
         if(typeof n !== "number") n = 1;

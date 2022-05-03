@@ -7,7 +7,7 @@
   "description": "A simple Node app built on Express, instantly up and running.",
   "main": "server.js",
   "scripts": {
-    "start": "(node server.js) & (node unresponsiveness-watcher.js; kill -9 \"$$\") & wait",
+    "start": "(node server.js; kill -9 \"$$\") & (node unresponsiveness-watcher.js; kill -9 \"$$\") & wait",
     "start30min": "(node server.js; kill -9 \"$$\") & (sleep 1800; kill -9 \"$$\") & wait"
   },
   "dependencies": {
