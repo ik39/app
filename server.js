@@ -233,7 +233,7 @@
           files.push( Buffer.from(dataUrl.split(",")[1], 'base64') );
           
           // note this regex is WITHOUT the g flag, so we only remove/replace one instance - i.e. the one we just processed.
-          result = result.replace(/<div data-bot-indicator="---color-palette-plugin-output---".+?>.+?<\/div>/, `Colors: ${colors.join(" ")}`);
+          result = result.replace(/<section data-bot-indicator="---color-palette-plugin-output---".*?>.+?<\/section>/s, `Colors: ${colors.join(" ")}`);
         }
         
         // convert image-layer-combiner-plugin images to attachments:
@@ -269,7 +269,7 @@
           let dataUrl = await canvas.toDataURL('jpeg');
           files.push( Buffer.from(dataUrl.split(",")[1], 'base64') );
         }
-        result = result.replace(/<div data-bot-indicator="---image-layer-combiner-plugin-output---".+?>.+?<\/div>/g, "");
+        result = result.replace(/<div data-bot-indicator="---image-layer-combiner-plugin-output---".+?>.+?<\/div>/gs, "");
         
         result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");
         result = result.replace(/<i>([^<]+?)<\/i>/g, "*$1*");
