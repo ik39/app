@@ -208,6 +208,33 @@
           files.push( Buffer.from(base64, 'base64') );
         }
         
+        
+        for(let match of result.matchAll(/data-bot-indicator="---color-palette-plugin-output---" data-colors="([^"]+)"/g)) {
+          let colors = decodeURIComponent(match[1]).split("<|||>");
+          const canvas = new skiaCanvas.Canvas(width, height);
+          const ctx = canvas.getContext('2d');
+          
+          let width = 500;
+          let height = 100;
+          ctx.fillStyle = "white";
+          ctx.fillRect(0, 0, width, height);
+          
+          let segmentWidth = width / colors.length;
+          
+          let i = 0;
+          for(let color of colors) {
+            ctx.fillStyle = color;
+            ctx.fillRect(segmentWidth*i, 0, segmentWidth, height);
+            i++;
+          }
+
+          let dataUrl = await canvas.toDataURL('png');
+          files.push( Buffer.from(dataUrl.split(",")[1], 'base64') );
+          
+          // note this regex is WITHOUT the g flag, so we only remove/replace one instance - i.e. the one we just processed.
+          result = result.replace(/<div data-bot-indicator="---color-palette-plugin-output---".+?>.+?<\/div>/, `Colors: ${colors.join(" ")}`);
+        }
+        
         // convert image-layer-combiner-plugin images to attachments:
         for(let match of result.matchAll(/data-bot-indicator="---image-layer-combiner-plugin-output---" data-image-urls="([^"]+)" data-image-filters="([^"]+)" data-width="([^"]*)" data-height="([^"]*)"/g)) {
           let urls = decodeURIComponent(match[1]).split("<|||>");
