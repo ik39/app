@@ -209,12 +209,15 @@
         // convert image-layer-combiner-plugin images to attachments:
         for(let match of result.matchAll(/data-bot-indicator="---image-layer-combiner-plugin-output---" data-image-urls="([^"]+)" data-image-filters="([^"]+)" data-width="([^"]*)" data-height="([^"]*)"/g)) {
           let urls = decodeURIComponent(match[1]).split("<|||>");
-          let filters = decodeURIComponent(match[1]).split("<|||>");
+          let filters = decodeURIComponent(match[2]).split("<|||>");
           
-          let width = Number(match[2] ? match[2].slice(0, -2) : 0) || 400; // slice to remove "px"
-          let height = Number(match[3] ? match[3].slice(0, -2) : 0) || null;
+          let width = Number(match[2] ? match[3].slice(0, -2) : 0) || 400; // slice to remove "px"
+          let height = Number(match[3] ? match[4].slice(0, -2) : 0) || null;
           
           let canvasImages = await Promise.all(urls.map(url => Canvas.loadImage(url)));
+          
+          console.log(urls);
+          console.log(filters);
           
           if(!height) height = Math.round((width/canvasImages[0].width) * canvasImages[0].height);
           
