@@ -211,18 +211,22 @@
           let urls = decodeURIComponent(match[1]).split("<|||>");
           let filters = decodeURIComponent(match[1]).split("<|||>");
           
-          let width = Number(match[2]) || 400;
-          let height = Number(match[3]) || null;
-          if(!height) height = Math.round((500/canvasImages[0].width) * canvasImages[0].height);
+          let width = Number(match[2] ? match[2].slice(0, -2) : 0) || 400; // slice to remove "px"
+          let height = Number(match[3] ? match[3].slice(0, -2) : 0) || null;
+          
+          let canvasImages = await Promise.all(urls.map(url => Canvas.loadImage(url)));
+          
+          if(!height) height = Math.round((width/canvasImages[0].width) * canvasImages[0].height);
           
           // since we want to draw the bottom layers first:
           urls.reverse();
           filters.reverse();
           
-          let canvasImages = await Promise.all(urls.map(url => Canvas.loadImage(url)));
-          
           const canvas = Canvas.createCanvas(width, height);
           const ctx = canvas.getContext('2d');
+          
+          ctx.fillStyle = "white";
+          ctx.fillRect(0, 0, width, height);
           
           let i = 0;
           for(let img of canvasImages) {
@@ -233,6 +237,7 @@
           let dataUrl = canvas.toDataURL('image/jpeg');
           files.push( Buffer.from(dataUrl.split(",")[1], 'base64') );
         }
+        result = result.replace(/<div data-bot-indicator="---image-layer-combiner-plugin-output---".+?>.+?<\/div>/g, "");
         
         result = result.replace(/<b>([^<]+?)<\/b>/g, "**$1**");
         result = result.replace(/<i>([^<]+?)<\/i>/g, "*$1*");
