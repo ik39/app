@@ -130,7 +130,9 @@
   }
   
   (async function() {
-    const Canvas = require('canvas'); // for image stuff like image-layer-combiner-plugin
+    // const Canvas = require('canvas'); // for image stuff like image-layer-combiner-plugin
+    const skiaCanvas = require('skia-canvas');
+    
     const { Client, Intents, MessageAttachment } = require('discord.js');
     const client = new Client({intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES]});
 
@@ -214,7 +216,7 @@
           let width = Number(match[2] ? match[3].slice(0, -2) : 0) || 400; // slice to remove "px"
           let height = Number(match[3] ? match[4].slice(0, -2) : 0) || null;
           
-          let canvasImages = await Promise.all(urls.map(url => Canvas.loadImage(url)));
+          let canvasImages = await Promise.all(urls.map(url => skiaCanvas.loadImage(url)));
           
           if(!height) height = Math.round((width/canvasImages[0].width) * canvasImages[0].height);
           
@@ -222,9 +224,9 @@
           canvasImages.reverse();
           filters.reverse();
           
-          console.log(filters);
+          // console.log(filters);
           
-          const canvas = Canvas.createCanvas(width, height);
+          const canvas = new skiaCanvas.Canvas(width, height);
           const ctx = canvas.getContext('2d');
           
           ctx.fillStyle = "white";
@@ -236,7 +238,7 @@
             ctx.drawImage(img, 0, 0, width, height);
           }
 
-          let dataUrl = canvas.toDataURL('image/jpeg');
+          let dataUrl = await canvas.toDataURL('jpeg');
           files.push( Buffer.from(dataUrl.split(",")[1], 'base64') );
         }
         result = result.replace(/<div data-bot-indicator="---image-layer-combiner-plugin-output---".+?>.+?<\/div>/g, "");
