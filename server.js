@@ -170,6 +170,17 @@
         if(questionMatch) command = questionMatch[1];
         else command = messageContent.split(" ").slice(1).join(" ");
         
+        if(command.startsWith(">")) {
+          let text = await fetch(`https://google.com/search?q=${command.slice(1).replaceAll(" ", "+")}+site:perchance.org`).then(r => r.text()).catch(e => e.message);
+          let match = text.match(/"https:\/\/perchance.org\/([^"]+)"/);
+          if(match) {
+            command = "!perch "+match[1].split("?")[0]; // split at `?` just in case it has url parameters for some reason
+          } else {
+            await msg.reply(`Failed to get search result`);
+            return;
+          }
+        }
+        
         let [generatorNameColonListName, ...variableAssignments] = command.split(" ");
         
         if(variableAssignments.length === 1 && variableAssignments[0] === "%reset") {
@@ -218,11 +229,6 @@
         if(generatorName === "%reset") {
           await msg.reply(`The bot has been reset.`);
           return process.exit(0);
-        }
-        
-        if(generatorName.startsWith(">")) {
-          let text = await fetch(`https://google.com/search?q=${generatorName.slice(1).replaceAll("-", " ")}`).then(r => r.text()).catch(e => e.message);
-          text.match(/https:\/\/perchance.org\/hello/)
         }
         
         let n = specialVariableMap.n || 1;
