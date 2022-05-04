@@ -220,6 +220,11 @@
           return process.exit(0);
         }
         
+        if(generatorName.startsWith(">")) {
+          let text = await fetch(`https://google.com/search?q=${generatorName.slice(1).replaceAll("-", " ")}`).then(r => r.text()).catch(e => e.message);
+          text.match(/https:\/\/perchance.org\/hello/)
+        }
+        
         let n = specialVariableMap.n || 1;
         if(typeof n !== "number") n = 1;
         if(n < 1) n = 1;
@@ -229,7 +234,8 @@
         
         let result = "";
         for(let i = 0; i < n; i++) {
-          result += await getGeneratorResult(generatorName, listName, variableAssignments).catch(e => e.message) + joiner;
+          let r = await getGeneratorResult(generatorName, listName, variableAssignments).catch(e => e.message);
+          result += r.trim() + joiner;
         }
         
         // convert image data URLs to attachements
