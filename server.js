@@ -156,6 +156,12 @@
       let messageContent = msg.content;
       
       let questionMatch = messageContent.trim().match(/[Pp]erch,.+\? ?\((.+)\)/);
+      if(!questionMatch) {
+        // use the default `yesno` generator
+        questionMatch = (messageContent.trim()+" (yesno)").match(/[Pp]erch,.+\? ?\((.+)\)/);
+      }
+      
+      
       if(messageContent.startsWith("!perch ") || questionMatch) {
         console.log("messageContent:", messageContent);
         
