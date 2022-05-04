@@ -347,6 +347,12 @@
         result = result.replace(/&#160;/g, " ");
         result = result.replace(/&nbsp;/g, " ");
         
+        if(result.includes("</")) {
+          const { window } = new JSDOM(`<!DOCTYPE html><html><body>${result}</body><html>`);
+          result = window.document.body.textContent;
+          window.close();
+        }
+        
         // Commenting this out for now because it wouldn't handle nested stuff.
         // result = result.replace(/<p[^>]*>(.*?)<\/p>/g, "$1\n\n");
         // result = result.replace(/<div[^>]*>(.*?)<\/div>/g, "$1\n");
