@@ -173,13 +173,29 @@
         else command = messageContent.split(" ").slice(1).join(" ");
         
         if(command.startsWith(">")) {
-          let text = await fetch(`https://google.com/search?q=${command.slice(1).replaceAll(" ", "+")}+site:perchance.org`).then(r => r.ok ? r.text() : r.status).catch(e => e.message);
-          let match = text.match(/"https:\/\/perchance.org\/([^"]+)"/);
+          let errorCodes = [];
+          let result;
+          result = await fetch(`https://google.com/search?q=${command.slice(1).replaceAll(" ", "+")}+site%3Aperchance.org`).then(r => r.ok ? r.text() : r.status);
+          if(typeof result === "number") {
+            errorCodes.push(result);
+            result = await fetch(`https://www.bing.com/search?q=${command.slice(1).replaceAll(" ", "+")}+site%3Aperchance.org`).then(r => r.ok ? r.text() : r.status);
+          }
+          if(typeof result === "number") {
+            errorCodes.push(result);
+            result = await fetch(`https://duckduckgo.com/?q=${command.slice(1).replaceAll(" ", "+")}+site%3Aperchance.org`).then(r => r.ok ? r.text() : r.status);
+          }
+            
+          if(typeof result == "number") {
+            await msg.reply(`Failed to get search result. Error codes: ${errorCodes.join(", ")}`);
+            return;
+          }
+          
+          let match = result.match(/https:\/\/perchance.org\/([a-z0-9\-]+)/);
           if(match) {
             command = match[1].split("?")[0]; // split at `?` just in case it has url parameters for some reason
             googleSearchFoundGenerator = command;
           } else {
-            await msg.reply(`Failed to get search result`);
+            await msg.reply(`Failed to get search result.`);
             return;
           }
         }
@@ -343,6 +359,8 @@
           result = result.trim().slice(0, 1900)+" ... (full result was too long)";
         }
         result = result.trim();
+        
+        if(googleSearchFoundGenerator) result = `<b>${googleSearchFoundGenerator}:</b> ` + result;
         
         let data = await msg.reply({
           content: result || " ",
