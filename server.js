@@ -72,7 +72,7 @@
     
     // console.log("getGeneratorResult:", generatorWindows[generatorName].generatorName);
     
-    if(generatorWindows[generatorName] && (!lastEditTimeCache[generatorName] || Date.now()-lastEditTimeCache[generatorName] < 3000)) {
+    if(generatorWindows[generatorName] && (!lastEditTimeCache[generatorName] || Date.now()-lastEditTimeCache[generatorName] > 3000)) {
       // clear cache for this generator if it's stale:
       let result = await fetch("https://perchance.org/api/getGeneratorStats?name="+generatorName).then(r => r.json());
       lastEditTimeCache[generatorName] = result.data.lastEditTime;
