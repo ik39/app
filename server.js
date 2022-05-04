@@ -161,6 +161,8 @@
         questionMatch = (messageContent.trim()+" (yesno)").match(/[Pp]erch,.+ ?\((.+)\)$/);
       }
       
+      let googleSearchFoundGenerator;
+      
       
       if(messageContent.startsWith("!perch ") || questionMatch) {
         console.log("messageContent:", messageContent);
@@ -171,10 +173,11 @@
         else command = messageContent.split(" ").slice(1).join(" ");
         
         if(command.startsWith(">")) {
-          let text = await fetch(`https://google.com/search?q=${command.slice(1).replaceAll(" ", "+")}+site:perchance.org`).then(r => r.text()).catch(e => e.message);
+          let text = await fetch(`https://google.com/search?q=${command.slice(1).replaceAll(" ", "+")}+site:perchance.org`).then(r => r.ok ? r.text() : r.status).catch(e => e.message);
           let match = text.match(/"https:\/\/perchance.org\/([^"]+)"/);
           if(match) {
-            command = "!perch "+match[1].split("?")[0]; // split at `?` just in case it has url parameters for some reason
+            command = match[1].split("?")[0]; // split at `?` just in case it has url parameters for some reason
+            googleSearchFoundGenerator = command;
           } else {
             await msg.reply(`Failed to get search result`);
             return;
