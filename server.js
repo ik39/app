@@ -175,14 +175,16 @@
         if(command.startsWith(">")) {
           let errorCodes = [];
           let result;
-          result = await fetch(`https://google.com/search?q=${command.slice(1).replaceAll(" ", "+")}+site%3Aperchance.org`).then(r => r.ok ? r.text() : r.status);
+          result = await fetch(`https://google.com/search?q=${command.slice(1).replaceAll(" ", "+")}+site%3Aperchance.org`, {headers:browserEmulationFetchHeaders}).then(r => r.ok ? r.text() : r.status);
           if(typeof result === "number") {
+            console.error("Failed to get Google search result.", result);
             errorCodes.push(result);
-            result = await fetch(`https://www.bing.com/search?q=${command.slice(1).replaceAll(" ", "+")}+site%3Aperchance.org`).then(r => r.ok ? r.text() : r.status);
+            result = await fetch(`https://www.bing.com/search?q=${command.slice(1).replaceAll(" ", "+")}+site%3Aperchance.org`, {headers:browserEmulationFetchHeaders}).then(r => r.ok ? r.text() : r.status);
           }
           if(typeof result === "number") {
+            console.error("Failed to get Bing search result.", result);
             errorCodes.push(result);
-            result = await fetch(`https://duckduckgo.com/?q=${command.slice(1).replaceAll(" ", "+")}+site%3Aperchance.org`).then(r => r.ok ? r.text() : r.status);
+            result = await fetch(`https://duckduckgo.com/?q=${command.slice(1).replaceAll(" ", "+")}+site%3Aperchance.org`, {headers:browserEmulationFetchHeaders}).then(r => r.ok ? r.text() : r.status);
           }
             
           if(typeof result == "number") {
@@ -360,7 +362,7 @@
         }
         result = result.trim();
         
-        if(googleSearchFoundGenerator) result = `<b>${googleSearchFoundGenerator}:</b> ` + result;
+        if(googleSearchFoundGenerator) result = `**${googleSearchFoundGenerator}:** ` + result;
         
         let data = await msg.reply({
           content: result || " ",
@@ -382,3 +384,26 @@
   })();
   
 })();
+
+var browserEmulationFetchHeaders = {
+  "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.41 Safari/537.36",
+  "accept": "*/*",
+  "accept-language": "en-AU,en-GB;q=0.9,en-US;q=0.8,en;q=0.7,pt;q=0.6",
+  "sec-ch-dpr": "2",
+  "sec-ch-ua": "\" Not A;Brand\";v=\"99\", \"Chromium\";v=\"101\", \"Google Chrome\";v=\"101\"",
+  "sec-ch-ua-arch": "\"x86\"",
+  "sec-ch-ua-bitness": "\"64\"",
+  "sec-ch-ua-full-version": "\"101.0.4951.41\"",
+  "sec-ch-ua-full-version-list": "\" Not A;Brand\";v=\"99.0.0.0\", \"Chromium\";v=\"101.0.4951.41\", \"Google Chrome\";v=\"101.0.4951.41\"",
+  "sec-ch-ua-mobile": "?0",
+  "sec-ch-ua-model": "",
+  "sec-ch-ua-platform": "\"Linux\"",
+  "sec-ch-ua-platform-version": "\"5.16.19\"",
+  "sec-ch-ua-wow64": "?0",
+  "sec-ch-viewport-width": "714",
+  "sec-fetch-dest": "empty",
+  "sec-fetch-mode": "cors",
+  "sec-fetch-site": "same-origin",
+  "Referer": "https://www.google.com/",
+  "Referrer-Policy": "origin"
+};
