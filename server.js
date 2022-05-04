@@ -201,7 +201,10 @@
           return;
         }
         
-        if(generatorName === "%reset") return process.exit(0);
+        if(generatorName === "%reset") {
+          await msg.reply(`The bot has been reset.`);
+          return process.exit(0);
+        }
         
         let n = specialVariableMap.n || 1;
         if(typeof n !== "number") n = 1;
