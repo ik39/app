@@ -153,10 +153,18 @@
     client.on('message', async msg => {
       if (msg.author.bot) return;
       
-      if(msg.content.startsWith("!perch ")) {
-        console.log("msg.content:", msg.content);
+      let messageContent = msg.content;
+      
+      let questionMatch = messageContent.trim().match(/[Pp]erch,.+\? ?\((.+)\)/);
+      if(messageContent.startsWith("!perch ") || questionMatch) {
+        console.log("messageContent:", messageContent);
         
-        let [generatorNameColonListName, ...variableAssignments] = msg.content.split(" ").slice(1);
+        let command;
+        
+        if(questionMatch) command = questionMatch[1];
+        else command = messageContent.split(" ").slice(1).join(" ");
+        
+        let [generatorNameColonListName, ...variableAssignments] = command.split(" ");
         
         if(variableAssignments.length === 1 && variableAssignments[0] === "%reset") {
           generatorWindows[generatorNameColonListName].close();
