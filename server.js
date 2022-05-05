@@ -68,7 +68,9 @@
   });
   
   let lastEditTimeCache = {};
-  async function getGeneratorResult(generatorName, listName, variableAssignments=[]) {
+  async function getGeneratorResult(generatorName, listNameOrCode, variableAssignments=[]) {
+    
+    // NOTE: if listNameOrCode starts with "~>", then it's interpretted as code
     
     // console.log("getGeneratorResult:", generatorWindows[generatorName].generatorName);
     
@@ -114,27 +116,33 @@
       if(r) r[lastPart] = value;
     }
     
-    if(!listName) {
-      if(root.botOutput) listName = "botOutput";
-      else if(root.$output) listName = "$output";
-      else if(root.output) listName = "output";
-      else return `Error: No 'botOutput' or or '$output' or 'output' list in the '${generatorName}' generator?`;
-    }
-    
-    let result;
-    try {
-      let r = root;
-      let parts = listName.split(".");
-      let lastPart = parts.pop();
-      for(let n of parts) {
-        if(r) r = r[n];
+    if(listNameOrCode.startsWith("~>")) {
+      window.__sf98whsf9woqthlakjsf92ue__ = 
+      let result = 
+      return result;
+    } else {
+      if(!listNameOrCode) {
+        if(root.botOutput) listNameOrCode = "botOutput";
+        else if(root.$output) listNameOrCode = "$output";
+        else if(root.output) listNameOrCode = "output";
+        else return `Error: No 'botOutput' or or '$output' or 'output' list in the '${generatorName}' generator?`;
       }
-      result = r[lastPart]+"";
-    } catch(e) {
-      return "Error: "+e.message;
+
+      let result;
+      try {
+        let r = root;
+        let parts = listNameOrCode.split(".");
+        let lastPart = parts.pop();
+        for(let n of parts) {
+          if(r) r = r[n];
+        }
+        result = r[lastPart]+"";
+      } catch(e) {
+        return "Error: "+e.message;
+      }
+      return result;
     }
     
-    return result;
   }
   
   (async function() {
@@ -209,10 +217,11 @@
         // This allows people to replace the list name with some custom code:
         //   !perch generator:<The [animal] sat on the [object]> ...
         let customCodeToBeExecuted;
+        let customCodeMagicListName = "___customCode8375026739258723__";
         if(command.split(" ")[0].includes(":<")) {
           try {
             customCodeToBeExecuted = command.split(":<")[1].split(">")[0];
-            command.replace(":<"+customCodeToBeExecuted+">", "customCode8375026739258723"); // 
+            command.replace(":<"+customCodeToBeExecuted+">", ":"+customCodeMagicListName); // replace with a fake list name that no one will use, and we'll detect this list name at the and and run the custom code instead
           } catch(e) {
             console.error(e);
           }
@@ -227,7 +236,11 @@
           return;
         }
         
-        let [generatorName, listName] = generatorNameColonListName.split(":");
+        let [generatorName, listNameOrCode] = generatorNameColonListName.split(":");
+        
+        if(listNameOrCode === customCodeMagicListName) {
+          listNameOrCode = "~>"+customCodeToBeExecuted; // "~>" is the market that tells getGeneratorResult that it's code
+        }
         
         // if(generatorName.startsWith("https://perchance.org/")) generatorName.replace("https://perchance.org/", "");
         
@@ -277,7 +290,7 @@
         
         let result = "";
         for(let i = 0; i < n; i++) {
-          let r = await getGeneratorResult(generatorName, listName, variableAssignments).catch(e => e.message);
+          let r = await getGeneratorResult(generatorName, listNameOrCode, variableAssignments).catch(e => e.message);
           result += r.trim() + joiner;
         }
         
