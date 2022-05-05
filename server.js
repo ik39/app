@@ -117,9 +117,7 @@
     }
     
     if(listNameOrCode.startsWith("~>")) {
-      window.__sf98whsf9woqthlakjsf92ue__ = 
-      let result = 
-      return result;
+      return window.String(listNameOrCode.slice(2)).evaluateItem;
     } else {
       if(!listNameOrCode) {
         if(root.botOutput) listNameOrCode = "botOutput";
@@ -127,7 +125,6 @@
         else if(root.output) listNameOrCode = "output";
         else return `Error: No 'botOutput' or or '$output' or 'output' list in the '${generatorName}' generator?`;
       }
-
       let result;
       try {
         let r = root;
@@ -221,7 +218,7 @@
         if(command.split(" ")[0].includes(":<")) {
           try {
             customCodeToBeExecuted = command.split(":<")[1].split(">")[0];
-            command.replace(":<"+customCodeToBeExecuted+">", ":"+customCodeMagicListName); // replace with a fake list name that no one will use, and we'll detect this list name at the and and run the custom code instead
+            command = command.replace(":<"+customCodeToBeExecuted+">", ":"+customCodeMagicListName); // replace with a fake list name that no one will use, and we'll detect this list name at the and and run the custom code instead
           } catch(e) {
             console.error(e);
           }
@@ -238,9 +235,14 @@
         
         let [generatorName, listNameOrCode] = generatorNameColonListName.split(":");
         
+        let itIsACustomCodeExecutionCommand = false;
         if(listNameOrCode === customCodeMagicListName) {
+          itIsACustomCodeExecutionCommand = true;
           listNameOrCode = "~>"+customCodeToBeExecuted; // "~>" is the market that tells getGeneratorResult that it's code
+          variableAssignments = []; // <-- these are no actually variable assignments
         }
+        
+        console.log(generatorName, listNameOrCode, variableAssignments);
         
         // if(generatorName.startsWith("https://perchance.org/")) generatorName.replace("https://perchance.org/", "");
         
