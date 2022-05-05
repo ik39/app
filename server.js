@@ -30,7 +30,7 @@
   let generatorWindows = {};
   let lastGeneratorUseTimes = {};
   let generatorCacheTimes = {};
-  let maxNumberOfGeneratorsCached = 50;
+  let maxNumberOfGeneratorsCached = 100;
   
   async function makeGeneratorWindow(generatorName) {
     let response = await fetch(`https://perchance.org/api/downloadGenerator?generatorName=${generatorName}&__cacheBust=${Math.random()}`);
