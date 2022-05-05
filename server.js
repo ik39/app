@@ -246,13 +246,6 @@
         
         let [generatorName, listName] = generatorNameColonListName.split(":");
         
-        let itIsACustomCodeExecutionCommand = false;
-        if(listName === customCodeMagicListName) {
-          itIsACustomCodeExecutionCommand = true;
-          listName = "~>"+customCodeToBeExecuted; // "~>" is the market that tells getGeneratorResult that it's code
-          variableAssignments = []; // <-- these are not actually variable assignments
-        }
-        
         console.log(generatorName, listName, variableAssignments);
         
         // if(generatorName.startsWith("https://perchance.org/")) generatorName.replace("https://perchance.org/", "");
@@ -300,6 +293,11 @@
         if(n > 100) n = 100;
         
         let joiner = "\n";
+        
+        // we need to do this here, after all the variable assignment (etc.) parsing
+        if(listName === customCodeMagicListName) {
+          listName = "~>"+customCodeToBeExecuted; // "~>" is the market that tells getGeneratorResult that it's code
+        }
         
         let result = "";
         for(let i = 0; i < n; i++) {
