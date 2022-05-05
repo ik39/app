@@ -114,6 +114,8 @@
       if(r) r[lastPart] = value;
     }
     
+    !perch generator <hello how are you going?>
+    
     if(!listName) {
       if(root.botOutput) listName = "botOutput";
       else if(root.$output) listName = "$output";
