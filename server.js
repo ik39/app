@@ -244,22 +244,22 @@
           return;
         }
         
-        let [generatorName, listNameOrCode] = generatorNameColonListName.split(":");
+        let [generatorName, listName] = generatorNameColonListName.split(":");
         
         let itIsACustomCodeExecutionCommand = false;
-        if(listNameOrCode === customCodeMagicListName) {
+        if(listName === customCodeMagicListName) {
           itIsACustomCodeExecutionCommand = true;
-          listNameOrCode = "~>"+customCodeToBeExecuted; // "~>" is the market that tells getGeneratorResult that it's code
-          variableAssignments = []; // <-- these are no actually variable assignments
+          listName = "~>"+customCodeToBeExecuted; // "~>" is the market that tells getGeneratorResult that it's code
+          variableAssignments = []; // <-- these are not actually variable assignments
         }
         
-        console.log(generatorName, listNameOrCode, variableAssignments);
+        console.log(generatorName, listName, variableAssignments);
         
         // if(generatorName.startsWith("https://perchance.org/")) generatorName.replace("https://perchance.org/", "");
         
         for(let vaString of variableAssignments) {
           if(!vaString.includes("=")) {
-            await msg.reply(`Your command should be formatted like these examples:\n\`\`\`!perch generator-name\`\`\`or:\n\`\`\`!perch generator-name:listName\`\`\`or:\n\`\`\`!perch generator-name:listName variable1=value variable2.thing=value\`\`\`\nor:\`\`\`!perch generator-name:listName %n=3\`\`\``);
+            await msg.reply(`Your command should be formatted like these examples:\n\`\`\`!perch generator-name\`\`\`or:\n\`\`\`!perch generator-name:listName\`\`\`or:\n\`\`\`!perch generator-name:listName variable1=value variable2.thing=value\`\`\`\nor:\`\`\`!perch generator-name:listName %n=3\`\`\`. See here for more advanced examples: https://discord.com/channels/970057744612724746/970057745665499148/970317365755654144`);
             return;
           }
         }
@@ -303,7 +303,7 @@
         
         let result = "";
         for(let i = 0; i < n; i++) {
-          let r = await getGeneratorResult(generatorName, listNameOrCode, variableAssignments).catch(e => e.message);
+          let r = await getGeneratorResult(generatorName, listName, variableAssignments).catch(e => e.message);
           result += r.toString().trim() + joiner;
         }
         
