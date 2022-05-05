@@ -114,8 +114,6 @@
       if(r) r[lastPart] = value;
     }
     
-    !perch generator <hello how are you going?>
-    
     if(!listName) {
       if(root.botOutput) listName = "botOutput";
       else if(root.$output) listName = "$output";
@@ -174,6 +172,10 @@
         if(questionMatch) command = questionMatch[1];
         else command = messageContent.split(" ").slice(1).join(" ");
         
+        // `command` is now the code without the "!perch" part
+        
+        // This allows people to run google/bing/etc. search to get the generator name
+        //   !perch >cool dnd item or something
         if(command.startsWith(">")) {
           let errorCodes = [];
           let result;
@@ -201,6 +203,18 @@
           } else {
             await msg.reply(`Failed to get search result.`);
             return;
+          }
+        }
+        
+        // This allows people to replace the list name with some custom code:
+        //   !perch generator:<The [animal] sat on the [object]> ...
+        let customCodeToBeExecuted;
+        if(command.split(" ")[0].includes(":<")) {
+          try {
+            customCodeToBeExecuted = command.split(":<")[1].split(">")[0];
+            command.replace(":<"+customCodeToBeExecuted+">", "customCode8375026739258723"); // 
+          } catch(e) {
+            console.error(e);
           }
         }
         
