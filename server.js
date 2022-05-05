@@ -217,7 +217,7 @@
         
         for(let vaString of variableAssignments) {
           if(!vaString.includes("=")) {
-            await msg.reply(`Your command should be in the format\n\`\`\`!perch generator-name\`\`\`\nor:\n\`\`\`!perch generator-name:listName\`\`\`\nor:\n\`\`\`!perch generator-name:listName variable1=value variable2.thing=value\`\`\`\n`);
+            await msg.reply(`Your command should be formatted like these examples:\n\`\`\`!perch generator-name\`\`\`or:\n\`\`\`!perch generator-name:listName\`\`\`or:\n\`\`\`!perch generator-name:listName variable1=value variable2.thing=value\`\`\`\nor:\`\`\`!perch generator-name:listName %n=3\`\`\``);
             return;
           }
         }
