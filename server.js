@@ -98,13 +98,13 @@
     }
     lastGeneratorUseTimes[generatorName] = Date.now();
     
-    let window = generatorWindows[generatorName];
-    let root = window.root;
+    let win = generatorWindows[generatorName];
+    let root = win.root;
     
     for(let [name, value] of variableAssignments) {
       console.log("variableAssignment:", name, value);
       // `name` can be something like "city.stats.population" or "inputEl.value"
-      let w = window;
+      let w = win;
       let r = root;
       let parts = name.split(".");
       let lastPart = parts.pop();
@@ -117,7 +117,17 @@
     }
     
     if(listNameOrCode.startsWith("~>")) {
-      return window.String(listNameOrCode.slice(2)).evaluateItem;
+      let out;
+      try {
+        console.log("RUN");
+        console.log(listNameOrCode.slice(2));
+        out = win.String(listNameOrCode.slice(2)).evaluateItem;
+        console.log(out);
+      } catch(e) {
+        console.log(e);
+        out = e.message;
+      }
+      return out;
     } else {
       if(!listNameOrCode) {
         if(root.botOutput) listNameOrCode = "botOutput";
@@ -293,7 +303,7 @@
         let result = "";
         for(let i = 0; i < n; i++) {
           let r = await getGeneratorResult(generatorName, listNameOrCode, variableAssignments).catch(e => e.message);
-          result += r.trim() + joiner;
+          result += r.toString().trim() + joiner;
         }
         
         // convert image data URLs to attachements
