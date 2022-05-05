@@ -119,10 +119,11 @@
     if(listNameOrCode.startsWith("~>")) {
       let out;
       try {
-        console.log("RUN");
-        console.log(listNameOrCode.slice(2));
-        out = win.String(listNameOrCode.slice(2)).evaluateItem;
-        console.log(out);
+        let code = listNameOrCode.slice(2);
+        
+        if(!win.__evaluateText) return "Error: There's a bug. Please tell @mechanic about this."; // <-- probably indicates that I've changed the engine code.
+        out = win.__evaluateText(root, root, code); // TEMPORARY HACK! __evaluateText is private engine code and could be changed in the future, and this would break. `win.String(code).evaluateItem` doesn't work for some reason (maybe can't modify built-ins with JSDOM??)
+        
       } catch(e) {
         console.log(e);
         out = e.message;
