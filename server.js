@@ -410,8 +410,9 @@
         
         if(googleSearchFoundGenerator) result = `**${googleSearchFoundGenerator}:** ` + result;
         
+        console.log("RESULT:", `"${String(result)}"  ${String(result) === ""}`)
         let data = await msg.reply({
-          content: String(result) || " ",
+          content: result === "" ? "*(empty result)*" : result,
           files,
         });
         
