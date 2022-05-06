@@ -116,7 +116,7 @@
       if(r) r[lastPart] = value;
     }
     
-    if(listNameOrCode.startsWith("~>")) {
+    if(listNameOrCode && listNameOrCode.startsWith("~>")) {
       let out;
       try {
         let code = listNameOrCode.slice(2);
