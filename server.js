@@ -171,10 +171,10 @@
       
       let messageContent = msg.content;
       
-      let questionMatch = messageContent.trim().match(/[Pp]erch,.+ ?\((.+)\)$/);
+      let questionMatch = messageContent.trim().match(/[Pp]erch,.+\((.+)\)/);
       if(!questionMatch) {
         // use the default `yesno` generator
-        questionMatch = (messageContent.trim()+" (yesno)").match(/[Pp]erch,.+ ?\((.+)\)$/);
+        questionMatch = (messageContent.trim()+" (yesno)").match(/[Pp]erch,.+\((.+)\)/);
       }
       
       let googleSearchFoundGenerator;
