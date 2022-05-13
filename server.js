@@ -25,8 +25,13 @@
   const app = express();
 
   app.get("/", (request, response) => {
-    response.send(`Hi.`);
+    if(!process.env.DISCORD_TOKEN) {
+      response.send("You need to add a DISCORD_TOKEN to the .env file.");
+      return;
+    }
+    response.send(`Hi, I'm awake!`);
   });
+  
   app.get("/status", (request, response) => {
     console.log("Responded to status request.");
     response.send(`online`);
@@ -65,6 +70,11 @@
   const listener = app.listen(process.env.PORT, () => {
     console.log("Your app is listening on port " + listener.address().port);
   });
+  
+  if(!process.env.DISCORD_TOKEN) {
+    console.error("You need to add a DISCORD_TOKEN to the .env file.");
+    return;
+  }
   
   let lastEditTimeCache = {};
   async function getGeneratorResult(generatorName, listNameOrCode, variableAssignments=[]) {
