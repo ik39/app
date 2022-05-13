@@ -1,5 +1,5 @@
 // To use this bot on your own server, you need to:
-//   1. Register a Discord application. Some helpful instructions are available in Step 2 of this blog post: https://web.archive.org/web/20220429161834/https://www.alpharithms.com/how-to-code-a-discord-bot-in-javascript-444917/#step-2-register-discord-application
+//   1. Register a Discord application. Some helpful instructions are available in Step 2 of this blog post: https://web.archive.org/web/20220429161834/https://www.alpharithms.com/how-to-code-a-discord-bot-in-javascript-444917/
 //   2. Remix/fork this server (you should see a button in the UI here somewhere)
 //   3. Add a variable in the .env file called DISCORD_TOKEN and put your Discord bot's token as the value
 // See here for info on how to use this bot: https://discord.com/channels/970057744612724746/970057745665499148/970317365755654144
@@ -9,8 +9,6 @@
   
   // Hacky way to prevent users' generator errors from crashing this whole node process
   process.on('unhandledRejection', (reason, promise) => {
-    // console.log("message", reason.message);
-    // console.log("stack", reason.stack);
     if(reason.stack.toString().includes("/jsdom/") || reason.stack.toString().includes("__createPerchanceTree")) {
       console.log(`Unhandled promise rejection:`)
       console.log(reason);
@@ -55,7 +53,7 @@
     return window;
   }
 
-  // If you'd also like this server to have a HTTP request API, uncomment this:
+  // If you'd also like this server to have a HTTP request API, uncomment the code below and send requests to https://your-subdomain-name.glitch.me/api?generatorName=your-generator-name&listName=output
   // app.get("/api", async (request, response) => {
   //   let generatorName = request.query.generator;
   //   let listName = request.query.list;
@@ -72,8 +70,6 @@
   async function getGeneratorResult(generatorName, listNameOrCode, variableAssignments=[]) {
     
     // NOTE: if listNameOrCode starts with "~>", then it's interpretted as code
-    
-    // console.log("getGeneratorResult:", generatorWindows[generatorName].generatorName);
     
     if(generatorWindows[generatorName] && (!lastEditTimeCache[generatorName] || Date.now()-lastEditTimeCache[generatorName] > 3000)) {
       // clear cache for this generator if it's stale:
@@ -155,7 +151,6 @@
   }
   
   (async function() {
-    // const Canvas = require('canvas'); // for image stuff like image-layer-combiner-plugin
     const skiaCanvas = require('skia-canvas');
     
     const { Client, Intents, MessageAttachment } = require('discord.js');
@@ -276,12 +271,7 @@
         let specialVariables = variableAssignments.filter(e => e[0].startsWith("%")).map(e => [e[0].slice(1), e[1]]);
         variableAssignments = variableAssignments.filter(e => !e[0].startsWith("%"));
         
-        // console.log("specialVariables:", specialVariables);
-        // console.log("variableAssignments:", variableAssignments);
-        
         let specialVariableMap = specialVariables.reduce((a,v) => (a[v[0]]=v[1], a), {});
-        
-        // console.log("specialVariableMap:", specialVariableMap);
         
         if(doNotReplyDueToRateLimit) {
           console.error(`Couldn't reply to ${msg.content} due to rate limit.`);
@@ -404,7 +394,6 @@
         }
         
         if(result.length > 2000) {
-          // msg.reply(`Error: Result from '${generatorName}' was ${result.length} characters long but must be under 2000 characters due to Discord API limits.`);
           result = result.trim().slice(0, 1900)+" ... (full result was too long)";
         }
         result = result.trim();
@@ -428,7 +417,7 @@
     });
 
     client.login(process.env.DISCORD_TOKEN);
-    process.env.DISCORD_TOKEN = ""; // for safety, because I haven't properly sandboxed JSDOM
+    process.env.DISCORD_TOKEN = ""; // because why not
   })();
   
 })();
