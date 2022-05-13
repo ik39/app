@@ -1,3 +1,10 @@
+// To use this bot on your own server, you need to:
+//   1. Register a Discord application. Some helpful instructions are available in Step 2 of this blog post: https://web.archive.org/web/20220429161834/https://www.alpharithms.com/how-to-code-a-discord-bot-in-javascript-444917/#step-2-register-discord-application
+//   2. Remix/fork this server (you should see a button in the UI here somewhere)
+//   3. Add a variable in the .env file called DISCORD_TOKEN and put your Discord bot's token as the value
+// See here for info on how to use this bot: https://discord.com/channels/970057744612724746/970057745665499148/970317365755654144
+
+
 (async function() { 
   
   // Hacky way to prevent users' generator errors from crashing this whole node process
@@ -47,22 +54,15 @@
     
     return window;
   }
-  
-  // reboot the server every 30 minutes (in case a generator has an infinite loop or something):
-  // edit: not needed anymore since we now have a watcher process that reboots the server if it doesn't respond for a certain amount of time
-  // setTimeout(() => {
-  //   process.exit(0);
-  // }, 1000*60*35); 
 
-//   app.get("/api", async (request, response) => {
-//     let generatorName = request.query.generator;
-//     let listName = request.query.list;
-    
-//     let result = await getGeneratorResult(generatorName, listName).catch(e => e.message);
-    
-//     response.send(result);
-//     console.log(`Served ${result} in response to ?generator=${generatorName}&list=${listName}`);
-//   }); 
+  // If you'd also like this server to have a HTTP request API, uncomment this:
+  // app.get("/api", async (request, response) => {
+  //   let generatorName = request.query.generator;
+  //   let listName = request.query.list;
+  //   let result = await getGeneratorResult(generatorName, listName).catch(e => e.message);
+  //   response.send(result);
+  //   console.log(`Served ${result} in response to ?generator=${generatorName}&list=${listName}`);
+  // }); 
  
   const listener = app.listen(process.env.PORT, () => {
     console.log("Your app is listening on port " + listener.address().port);
@@ -398,11 +398,6 @@
           result = window.document.body.textContent;
           window.close();
         }
-        
-        // Commenting this out for now because it wouldn't handle nested stuff.
-        // result = result.replace(/<p[^>]*>(.*?)<\/p>/g, "$1\n\n");
-        // result = result.replace(/<div[^>]*>(.*?)<\/div>/g, "$1\n");
-        // result = result.replace(/<span[^>]*>(.*?)<\/span>/g, "$1");
         
         if(needToSendRateLimitWarningWithNextMessage) {
           result = "(**Note**: Bot is being rate limited by Discord API) " + result;
