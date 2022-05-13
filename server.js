@@ -248,7 +248,11 @@
         
         console.log(generatorName, listName, variableAssignments);
         
-        // if(generatorName.startsWith("https://perchance.org/")) generatorName.replace("https://perchance.org/", "");
+        // Handle variable assignments with spaces (must be in double quotes)
+        const variableAssignmentSpaceToken = "51939563857-space-token85937565389";
+        let variableAssignmentsStr = variableAssignments.join(" ");
+        variableAssignmentsStr = variableAssignmentsStr.replace(/="([^"]+)"/g, (m, p1) => `=${p1.replaceAll(" ", variableAssignmentSpaceToken)}`);
+        variableAssignments = variableAssignmentsStr.split(" ");
         
         for(let vaString of variableAssignments) {
           if(!vaString.includes("=")) {
