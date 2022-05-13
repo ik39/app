@@ -249,7 +249,7 @@
         console.log(generatorName, listName, variableAssignments);
         
         // Handle variable assignments with spaces (must be in double quotes)
-        const variableAssignmentSpaceToken = "51939563857-space-token85937565389";
+        const variableAssignmentSpaceToken = "-51939563857-space-token-85937565389-";
         let variableAssignmentsStr = variableAssignments.join(" ");
         variableAssignmentsStr = variableAssignmentsStr.replace(/="([^"]+)"/g, (m, p1) => `=${p1.replaceAll(" ", variableAssignmentSpaceToken)}`);
         variableAssignments = variableAssignmentsStr.split(" ");
@@ -269,6 +269,7 @@
           
           
           if(typeof va[1] === "string") va[1] = va[1].replace(/\\n/g, "\n"); // so people can set e.g. textarea inputs that have multiple lines
+          if(typeof va[1] === "string") va[1] = va[1].replaceAll(variableAssignmentSpaceToken, " ");
         }
         
         let specialVariables = variableAssignments.filter(e => e[0].startsWith("%")).map(e => [e[0].slice(1), e[1]]);
