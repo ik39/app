@@ -49,19 +49,20 @@
   }
   
   // reboot the server every 30 minutes (in case a generator has an infinite loop or something):
-  setTimeout(() => {
-    process.exit(0);
-  }, 1000*60*35); 
+  // edit: not needed anymore since we now have a watcher process that reboots the server if it doesn't respond for a certain amount of time
+  // setTimeout(() => {
+  //   process.exit(0);
+  // }, 1000*60*35); 
 
-  app.get("/api", async (request, response) => {
-    let generatorName = request.query.generator;
-    let listName = request.query.list;
+//   app.get("/api", async (request, response) => {
+//     let generatorName = request.query.generator;
+//     let listName = request.query.list;
     
-    let result = await getGeneratorResult(generatorName, listName).catch(e => e.message);
+//     let result = await getGeneratorResult(generatorName, listName).catch(e => e.message);
     
-    response.send(result);
-    console.log(`Served ${result} in response to ?generator=${generatorName}&list=${listName}`);
-  }); 
+//     response.send(result);
+//     console.log(`Served ${result} in response to ?generator=${generatorName}&list=${listName}`);
+//   }); 
  
   const listener = app.listen(process.env.PORT, () => {
     console.log("Your app is listening on port " + listener.address().port);
