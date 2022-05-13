@@ -1,7 +1,9 @@
 // See the README.md file for instructions on how to install this bot on your own server.
 
-// Note that if you edit this file, then you need to make an edit to watch.json to trigger the server restart.
-// That's because I set `throttle` to a large number because I don't like it when Glitch 
+// Note that if you edit this file, then you need to make an edit to watch.json to trigger the
+// server restart. You can just add/remove a space or something. This is necessary because I set
+// `throttle` to a large number because I don't like it when Glitch restarts the server after
+// every single edit that I make to server.js
 
 (async function() { 
   
