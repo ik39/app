@@ -258,7 +258,7 @@
         const variableAssignmentSpaceToken = "-51939563857-space-token-85937565389-";
         let variableAssignmentsStr = variableAssignments.join(" ");
         variableAssignmentsStr = variableAssignmentsStr.replace(/="([^"]+)"/g, (m, p1) => `=${p1.replaceAll(" ", variableAssignmentSpaceToken)}`);
-        variableAssignments = variableAssignmentsStr.split(" ");
+        variableAssignments = variableAssignmentsStr.split(" ").filter(va => va.trim());
         
         for(let vaString of variableAssignments) {
           if(!vaString.includes("=")) {
