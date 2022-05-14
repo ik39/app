@@ -262,6 +262,7 @@
         
         for(let vaString of variableAssignments) {
           if(!vaString.includes("=")) {
+            console.warn("Invalid variable assignments.");
             await msg.reply(`Your command should be formatted like these examples:\n\`\`\`!perch generator-name\`\`\`Output a specific list name:\n\`\`\`!perch generator-name:listName\`\`\`Set variables and inputs:\n\`\`\`!perch generator-name:listName variable1=value variable2.thing=value\`\`\`Generate multiple results:\`\`\`!perch generator-name:listName %n=3\`\`\`Run custom code:\`\`\`!perch animal-sentence:<the [animal] ate {2-4} [noun.pluralForm]>\`\`\`See here for more advanced examples: https://discord.com/channels/970057744612724746/970057745665499148/970317365755654144`);
             return;
           }
@@ -289,6 +290,7 @@
         }
         
         if(generatorName === "%reset") {
+          console.warn("Recieved reset command.");
           await msg.reply(`The bot has been reset.`);
           return process.exit(0);
         }
