@@ -3,3 +3,5 @@ To use this bot on your own server, you need to:
   2. Remix/fork this server. You should see a remix button somewhere on this page.
   3. Add a variable in the `.env` file (in the side bar) called `DISCORD_TOKEN` and put your Discord bot's token as the value. The above blog post has info on where to find your bot's token.
   4. Read [these instructions](https://discord.com/channels/970057744612724746/970057745665499148/970317365755654144) on how to use the bot.
+  
+  If you're just looking for a Perchance API rather than a Discord bot, click here: [perchance.org/diy-perchance-api](https://perchance.org/diy-perchance-api)
