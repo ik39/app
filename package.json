@@ -11,11 +11,12 @@
     "start30min": "(node server.js; kill -9 \"$$\") & (sleep 1800; kill -9 \"$$\") & wait"
   },
   "dependencies": {
-    "express": "^4.17.1",
-    "node-fetch": "^2.6.1",
+    "express": "^4.19.2",
+    "node-fetch": "^2.7.0",
     "jsdom": "^19.0.0",
-    "discord.js": "^13.6.0",
-    "skia-canvas": "^0.9.29"
+    "discord.js": "^13.17.1",
+    "skia-canvas": "^0.9.29",
+    "dotenv": "^16.4.5"
   },
   "engines": {
     "node": "16.x"

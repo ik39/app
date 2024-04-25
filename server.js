@@ -22,6 +22,12 @@
   const jsdom = require("jsdom");
   const { JSDOM } = jsdom;
   const express = require("express"); 
+  
+  const dotenv = require('dotenv');
+  if(!process.env || !process.env.DISCORD_TOKEN) {
+    dotenv.config();
+  }
+  
   const app = express();
 
   app.get("/", (request, response) => {
